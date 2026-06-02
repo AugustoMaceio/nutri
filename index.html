@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano Nutricional</title>
+    <link rel="stylesheet" href="style.css">
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2e7d32">
+</head>
+<body>
+
+    <header>
+        <h1>Plano Nutricional</h1>
+        <p>Augusto Cesar Melo de Oliveira</p>
+    </header>
+<section>
+    <h2>Histórico</h2>
+    <div id="historicoDias"></div>
+</section>
+    <nav id="menu"></nav>
+<div class="progresso">
+    <progress id="barra" value="0" max="7"></progress>
+    <span id="textoProgresso"></span>
+</div>
+    <main>
+        <div id="conteudo"></div>
+    <label>
+    <input
+        type="checkbox"
+        onchange="toggleRefeicao('pretreino')">
+    Refeição realizada
+</label>
+<button onclick="gerarListaCompras()">
+    Gerar Lista de Compras
+</button>
+
+<ul id="listaCompras"></ul>
+<div id="nutrientes"></div>
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+
+  <!-- Fundo -->
+  <rect width="512" height="512" rx="96" fill="#2E7D32"></rect>
+
+  <!-- Prato -->
+  <circle cx="256" cy="256" r="120" fill="#FFFFFF"></circle>
+
+  <circle cx="256" cy="256" r="85" fill="none" stroke="#2E7D32" stroke-width="12"></circle>
+
+  <!-- Garfo -->
+  <g fill="#FFFFFF">
+      <rect x="125" y="150" width="12" height="170" rx="4"></rect>
+      <rect x="113" y="130" width="6" height="40"></rect>
+      <rect x="123" y="130" width="6" height="40"></rect>
+      <rect x="133" y="130" width="6" height="40"></rect>
+      <rect x="143" y="130" width="6" height="40"></rect>
+  </g>
+
+  <!-- Faca -->
+  <g fill="#FFFFFF">
+      <path d="
+          M385 130
+          C395 130 400 145 400 170
+          L400 320
+          L388 320
+          L388 220
+          C388 205 382 195 375 190
+          C368 185 365 178 365 165
+          C365 145 372 130 385 130
+          Z"></path>
+  </g>
+
+  <!-- Folha -->
+  <path d="
+      M256 160
+      C320 180 350 230 320 290
+      C300 330 250 350 210 320
+      C170 290 175 220 256 160
+      Z" fill="#66BB6A"></path>
+
+  <!-- Nervura da folha -->
+  <path d="
+      M256 180
+      L256 305
+      " stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"></path>
+
+  <path d="
+      M256 230
+      L295 205
+      " stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"></path>
+
+  <path d="
+      M256 260
+      L215 235
+      " stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"></path>
+
+</svg>

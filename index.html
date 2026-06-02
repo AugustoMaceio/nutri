@@ -15,17 +15,22 @@
         <h1>Plano Nutricional</h1>
         <p>Augusto Cesar Melo de Oliveira</p>
     </header>
-<section>
+
+    <label for="momentoSelect">Momento:</label>
+    <select id="momentoSelect" aria-label="Selecionar momento do dia"></select>
+    <div id="horarios"></div>
+
+    <main>
+        <div id="conteudo"></div>
+
+        <section>
     <h2>Histórico</h2>
     <div id="historicoDias"></div>
 </section>
-    <nav id="menu"></nav>
 <div class="progresso">
     <progress id="barra" value="0" max="7"></progress>
     <span id="textoProgresso"></span>
 </div>
-    <main>
-        <div id="conteudo"></div>
     <label>
     <input
         type="checkbox"

@@ -189,8 +189,18 @@ const tabelaNutricional = {
         gordura: 3.6
     }
 };
-const menu = document.getElementById("menu");
+const momentoSelect = document.getElementById('momentoSelect');
+const horariosDiv = document.getElementById('horarios');
 const conteudo = document.getElementById("conteudo");
+const schedule = {
+    "Pré-Treino": "05:30",
+    "Café da Manhã / Pós-Treino": "07:00",
+    "Lanche da Manhã": "10:00",
+    "Almoço": "12:30",
+    "Lanche da Tarde": "16:00",
+    "Jantar": "19:00",
+    "Ceia": "22:30"
+};
 function mostrarNutrientes(item) {
     const dados = tabelaNutricional[item];
 
@@ -334,16 +344,63 @@ function mostrarMomento(nome) {
     conteudo.innerHTML = html;
 }
 
-Object.keys(plano).forEach((momento, indice) => {
-    const botao = document.createElement("button");
-    botao.textContent = momento;
-    botao.onclick = () => mostrarMomento(momento);
-    menu.appendChild(botao);
+function minutesSinceMidnight(timeStr) {
+    const [h, m] = timeStr.split(':').map(Number);
+    return h * 60 + m;
+}
 
-    if (indice === 0) {
-        mostrarMomento(momento);
+function getClosestMoment() {
+    const now = new Date();
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+    let closest = null;
+    let minDiff = Number.POSITIVE_INFINITY;
+
+    Object.keys(schedule).forEach(m => {
+        const t = minutesSinceMidnight(schedule[m]);
+        const diff = Math.abs(t - nowMinutes);
+        if (diff < minDiff) {
+            minDiff = diff;
+            closest = m;
+        }
+    });
+
+    return closest;
+}
+
+function renderHorarios() {
+    let html = '<ul class="lista-horarios">';
+    Object.keys(schedule).forEach(m => {
+        html += `<li><strong>${m}</strong>: ${schedule[m]}</li>`;
+    });
+    html += '</ul>';
+    //horariosDiv.innerHTML = html;
+}
+
+function populateSelectAndInit() {
+    momentoSelect.innerHTML = '';
+    const momentos = Object.keys(plano);
+    momentos.forEach((momento) => {
+        const opt = document.createElement('option');
+        opt.value = momento;
+        opt.textContent = momento;
+        momentoSelect.appendChild(opt);
+    });
+
+    renderHorarios();
+
+    const closest = getClosestMoment();
+    if (closest) {
+        momentoSelect.value = closest;
+        mostrarMomento(closest);
+    } else {
+        mostrarMomento(momentos[0]);
     }
-});
+
+    momentoSelect.addEventListener('change', (e) => {
+        mostrarMomento(e.target.value);
+    });
+}
 
 // Inicialização da UI ao carregar a página
 document.addEventListener('DOMContentLoaded', () => {
@@ -357,6 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarNutrientes(e.target.textContent.trim());
         }
     });
+    populateSelectAndInit();
 });
 
 if ('serviceWorker' in navigator) {

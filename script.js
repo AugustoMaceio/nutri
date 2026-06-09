@@ -253,22 +253,33 @@ function carregarHistorico() {
     ).innerHTML = html;
 }
 
-function toggleRefeicao(id) {
+function normalizarId(momento) {
+    return momento
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}
 
+function chaveOpcao(momento, indice) {
+    return `${normalizarId(momento)}-opcao-${indice + 1}`;
+}
+
+function toggleRefeicao(momento, indice) {
     const historico =
         JSON.parse(localStorage.getItem("historico")) || {};
 
-    historico[id] = !historico[id];
+    const chave = chaveOpcao(momento, indice);
 
-    localStorage.setItem(
-        "historico",
-        JSON.stringify(historico)
-    );
+    historico[chave] = !historico[chave];
 
+    localStorage.setItem("historico", JSON.stringify(historico));
+    salvarHistorico();
     atualizarProgresso();
+    mostrarMomento(momento);
 }
 function atualizarProgresso() {
-
     const historico =
         JSON.parse(localStorage.getItem("historico")) || {};
 
@@ -276,23 +287,37 @@ function atualizarProgresso() {
         Object.values(historico)
             .filter(Boolean).length;
 
-    document.getElementById("barra").value =
-        realizadas;
+    const total = Object.values(plano)
+        .reduce((sum, opcoes) => sum + opcoes.length, 0);
 
-    document.getElementById("textoProgresso")
-        .innerText =
-        `${realizadas}/7 refeições realizadas`;
+    document.getElementById("barra").max = total;
+    document.getElementById("barra").value = realizadas;
+
+    document.getElementById("textoProgresso").innerText =
+        `${realizadas}/${total} opções realizadas`;
 }
 function mostrarMomento(nome) {
+    const historico = JSON.parse(localStorage.getItem("historico")) || {};
+
     let html = `
         <div class="card">
             <h2>${nome}</h2>
     `;
 
     plano[nome].forEach((opcao, indice) => {
+        const chave = chaveOpcao(nome, indice);
+        const concluida = historico[chave] ? " opcao-marcada" : "";
+
         html += `
-            <div class="opcao">
-                <h3>Opção ${indice + 1}</h3>
+            <article class="opcao${concluida}" data-momento="${nome}" data-opcao="${indice + 1}">
+                <label class="opcao-checkbox">
+                    <input
+                        type="checkbox"
+                        ${historico[chave] ? "checked" : ""}
+                        onchange="toggleRefeicao('${nome}', ${indice})"
+                    >
+                    <strong>Opção ${indice + 1}</strong>
+                </label>
                 <ul>
         `;
 
@@ -302,7 +327,7 @@ function mostrarMomento(nome) {
 
         html += `
                 </ul>
-            </div>
+            </article>
         `;
     });
 

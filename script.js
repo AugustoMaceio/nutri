@@ -201,24 +201,7 @@ const schedule = {
     "Jantar": "19:00",
     "Ceia": "22:30"
 };
-function mostrarNutrientes(item) {
-    const dados = tabelaNutricional[item];
 
-    if (!dados) {
-        document.getElementById("nutrientes").innerHTML = `
-            <p>Sem dados nutricionais para <strong>${item}</strong>.</p>
-        `;
-        return;
-    }
-
-    document.getElementById("nutrientes").innerHTML = `
-        <h3>${item}</h3>
-        <p>🔥 ${dados.calorias} kcal</p>
-        <p>🥩 ${dados.proteina} g proteína</p>
-        <p>🍞 ${dados.carboidrato} g carboidratos</p>
-        <p>🥑 ${dados.gordura} g gorduras</p>
-    `;
-}
 function salvarHistorico() {
 
     const hoje =
@@ -269,23 +252,7 @@ function carregarHistorico() {
         "historicoDias"
     ).innerHTML = html;
 }
-function gerarListaCompras() {
 
-    const lista =
-        document.getElementById("listaCompras");
-
-    lista.innerHTML = "";
-
-    ingredientes.forEach(item => {
-
-        const li =
-            document.createElement("li");
-
-        li.textContent = item;
-
-        lista.appendChild(li);
-    });
-}
 function toggleRefeicao(id) {
 
     const historico =
@@ -404,16 +371,8 @@ function populateSelectAndInit() {
 
 // Inicialização da UI ao carregar a página
 document.addEventListener('DOMContentLoaded', () => {
-    gerarListaCompras();
     carregarHistorico();
     atualizarProgresso();
-
-    // clicar em um item da lista mostra nutrientes (se disponíveis)
-    document.getElementById('listaCompras').addEventListener('click', (e) => {
-        if (e.target && e.target.nodeName === 'LI') {
-            mostrarNutrientes(e.target.textContent.trim());
-        }
-    });
     populateSelectAndInit();
 });
 

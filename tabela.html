@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela Nutricional - Plano de Alimentação</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .info {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .controls input, .controls select {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .controls input:focus, .controls select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .controls button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .controls button:hover {
+            background: #764ba2;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-right: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        th:last-child {
+            border-right: none;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9ff;
+            cursor: pointer;
+        }
+        
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .categoria-frutas {
+            background: #fff3e0;
+        }
+        
+        .categoria-proteinas {
+            background: #ffe0e0;
+        }
+        
+        .categoria-lacticinios {
+            background: #e0f2f1;
+        }
+        
+        .categoria-carboidratos {
+            background: #fff9e6;
+        }
+        
+        .categoria-suplementos {
+            background: #f3e5f5;
+        }
+        
+        .categoria-legumes {
+            background: #e8f5e9;
+        }
+        
+        .categoria-hortalizas {
+            background: #e0f2f1;
+        }
+        
+        .categoria-cereais {
+            background: #fbe9e7;
+        }
+        
+        .numero {
+            text-align: right;
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .legenda {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+        
+        .legenda-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+        }
+        
+        .legenda-cor {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        
+        .calculadora {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .calculadora h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .calculadora-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .calculadora-input input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+        }
+        
+        .resultado {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .resultado-item {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        
+        .resultado-label {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .resultado-valor {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .fonte {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            th, td {
+                padding: 10px;
+                font-size: 13px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .controls input, .controls select, .controls button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Tabela Nutricional - Plano de Alimentação</h1>
+        <div class="info">
+            <p>Fonte: TACO (Tabela Brasileira de Composição de Alimentos) - UNICAMP</p>
+            <p>Valores nutricionais por 100g (exceto onde indicado)</p>
+        </div>
+        
+        <div class="controls">
+            <input type="text" id="searchInput" placeholder="🔍 Buscar ingrediente..." />
+            <select id="categoriaFilter">
+                <option value="">Todas as categorias</option>
+                <option value="Frutas">Frutas</option>
+                <option value="Carnes e derivados">Carnes</option>
+                <option value="Pescados">Pescados</option>
+                <option value="Produtos de origem animal">Proteínas Animal</option>
+                <option value="Laticínios">Laticínios</option>
+                <option value="Suplementos">Suplementos</option>
+                <option value="Tubérculos">Tubérculos</option>
+                <option value="Cereais">Cereais</option>
+                <option value="Legumes">Legumes</option>
+                <option value="Hortaliças">Hortaliças</option>
+            </select>
+            <button onclick="resetarFiltros()">🔄 Limpar Filtros</button>
+        </div>
+        
+        <div class="table-wrapper">
+            <table id="tabelaNutricional">
+                <thead>
+                    <tr>
+                        <th>Ingrediente</th>
+                        <th>Categoria</th>
+                        <th class="numero">Kcal</th>
+                        <th class="numero">Proteína (g)</th>
+                        <th class="numero">Carb (g)</th>
+                        <th class="numero">Gordura (g)</th>
+                        <th class="numero">Fibra (g)</th>
+                        <th class="numero">Cálcio (mg)</th>
+                        <th class="numero">Ferro (mg)</th>
+                        <th class="numero">Potássio (mg)</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaBody">
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="calculadora">
+            <h3>🧮 Calculadora de Macronutrientes</h3>
+            <div class="calculadora-input">
+                <select id="ingredienteCalc" style="flex: 1;">
+                    <option value="">Selecione um ingrediente...</option>
+                </select>
+                <input type="number" id="pesoCalc" placeholder="Peso em gramas" value="100" min="1" style="width: 150px;" />
+                <button onclick="calcularMacros()" style="width: 150px;">Calcular</button>
+            </div>
+            <div class="resultado" id="resultadoCalc"></div>
+        </div>
+        
+        <div class="legenda">
+            <div class="legenda-item">
+                <div class="legenda-cor" style="background: #fff3e0;"></div>
+                <span>Frutas</span>
+            </div>
+            <div class="legenda-item">
+                <div class="legenda-cor" style="background: #ffe0e0;"></div>
+                <span>Carnes e Proteínas</span>
+            </div>
+            <div class="legenda-item">
+                <div class="legenda-cor" style="background: #e0f2f1;"></div>
+                <span>Laticínios / Pescados</span>
+            </div>
+            <div class="legenda-item">
+                <div class="legenda-cor" style="background: #fff9e6;"></div>
+                <span>Tubérculos</span>
+            </div>
+            <div class="legenda-item">
+                <div class="legenda-cor" style="background: #f3e5f5;"></div>
+                <span>Suplementos</span>
+            </div>
+            <div class="legenda-item">
+                <div class="legenda-cor" style="background: #fbe9e7;"></div>
+                <span>Cereais</span>
+            </div>
+            <div class="legenda-item">
+                <div class="legenda-cor" style="background: #e8f5e9;"></div>
+                <span>Legumes</span>
+            </div>
+            <div class="legenda-item">
+                <div class="legenda-cor" style="background: #e0f2f1;"></div>
+                <span>Hortaliças</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Base de dados dos ingredientes (mesma do arquivo JS principal)
+        const ingredientes = {
+            "banana": {"nome": "Banana prata crua", "categoria": "Frutas", "porcao": "100g (1 banana pequena ≈ 80g)", "energia_kcal": 98, "proteina_g": 1.3, "carboidrato_g": 26.0, "gordura_g": 0.1, "fibra_g": 2.0, "calcio_mg": 5, "ferro_mg": 0.3, "potassio_mg": 358},
+            "morango": {"nome": "Morango cru", "categoria": "Frutas", "porcao": "100g (7-8 morangos)", "energia_kcal": 40, "proteina_g": 0.7, "carboidrato_g": 7.7, "gordura_g": 0.3, "fibra_g": 2.0, "calcio_mg": 16, "ferro_mg": 0.3, "potassio_mg": 153},
+            "kiwi": {"nome": "Kiwi cru", "categoria": "Frutas", "porcao": "100g (1 unidade média)", "energia_kcal": 61, "proteina_g": 0.8, "carboidrato_g": 14.7, "gordura_g": 0.5, "fibra_g": 2.6, "calcio_mg": 34, "ferro_mg": 0.3, "potassio_mg": 312},
+            "maca": {"nome": "Maçã com casca crua", "categoria": "Frutas", "porcao": "100g (1 maçã pequena)", "energia_kcal": 52, "proteina_g": 0.2, "carboidrato_g": 13.8, "gordura_g": 0.2, "fibra_g": 2.4, "calcio_mg": 6, "ferro_mg": 0.1, "potassio_mg": 107},
+            "frango": {"nome": "Frango peito sem pele cozido", "categoria": "Carnes e derivados", "porcao": "100g", "energia_kcal": 163, "proteina_g": 31.5, "carboidrato_g": 0.0, "gordura_g": 3.2, "fibra_g": 0.0, "calcio_mg": 9, "ferro_mg": 0.4, "potassio_mg": 270},
+            "peixe_salmao": {"nome": "Salmão sem pele cru", "categoria": "Pescados", "porcao": "100g", "energia_kcal": 170, "proteina_g": 19.3, "carboidrato_g": 0.0, "gordura_g": 9.7, "fibra_g": 0.0, "calcio_mg": 10, "ferro_mg": 0.8, "potassio_mg": 330},
+            "ovo": {"nome": "Ovo de galinha inteiro cru", "categoria": "Produtos de origem animal", "porcao": "100g (2 ovos grandes)", "energia_kcal": 143, "proteina_g": 13.0, "carboidrato_g": 1.6, "gordura_g": 8.9, "fibra_g": 0.0, "calcio_mg": 50, "ferro_mg": 1.8, "potassio_mg": 130},
+            "clara_ovo": {"nome": "Clara de ovo cru", "categoria": "Produtos de origem animal", "porcao": "100g (clara de 3 ovos)", "energia_kcal": 52, "proteina_g": 11.1, "carboidrato_g": 0.7, "gordura_g": 0.2, "fibra_g": 0.0, "calcio_mg": 8, "ferro_mg": 0.1, "potassio_mg": 163},
+            "carne_vermelha": {"nome": "Carne vermelha magra cozida", "categoria": "Carnes e derivados", "porcao": "100g", "energia_kcal": 180, "proteina_g": 28.0, "carboidrato_g": 0.0, "gordura_g": 7.5, "fibra_g": 0.0, "calcio_mg": 8, "ferro_mg": 2.8, "potassio_mg": 340},
+            "queijo": {"nome": "Queijo meia cura", "categoria": "Laticínios", "porcao": "20g", "energia_kcal": 79, "proteina_g": 7.0, "carboidrato_g": 0.6, "gordura_g": 5.5, "fibra_g": 0.0, "calcio_mg": 160, "ferro_mg": 0.2, "potassio_mg": 35},
+            "iogurte_natural": {"nome": "Iogurte natural desnatado", "categoria": "Laticínios", "porcao": "100g", "energia_kcal": 41, "proteina_g": 3.8, "carboidrato_g": 5.8, "gordura_g": 0.3, "fibra_g": 0.0, "calcio_mg": 120, "ferro_mg": 0.1, "potassio_mg": 155},
+            "leite_desnatado": {"nome": "Leite integral", "categoria": "Laticínios", "porcao": "200ml", "energia_kcal": 62, "proteina_g": 3.2, "carboidrato_g": 4.8, "gordura_g": 1.6, "fibra_g": 0.0, "calcio_mg": 113, "ferro_mg": 0.06, "potassio_mg": 150},
+            "whey_protein": {"nome": "Whey Protein Concentrado", "categoria": "Suplementos", "porcao": "30g (1 scoop)", "energia_kcal": 120, "proteina_g": 24.0, "carboidrato_g": 3.0, "gordura_g": 1.5, "fibra_g": 0.0, "calcio_mg": 200, "ferro_mg": 0.5, "potassio_mg": 0},
+            "batata_doce": {"nome": "Batata doce cozida", "categoria": "Tubérculos", "porcao": "100g", "energia_kcal": 77, "proteina_g": 0.6, "carboidrato_g": 18.4, "gordura_g": 0.1, "fibra_g": 2.2, "calcio_mg": 17, "ferro_mg": 0.4, "potassio_mg": 220},
+            "inhame": {"nome": "Inhame cozido", "categoria": "Tubérculos", "porcao": "100g", "energia_kcal": 98, "proteina_g": 2.0, "carboidrato_g": 23.7, "gordura_g": 0.1, "fibra_g": 3.9, "calcio_mg": 14, "ferro_mg": 0.5, "potassio_mg": 816},
+            "macaxeira": {"nome": "Macaxeira (mandioca) cozida", "categoria": "Tubérculos", "porcao": "100g", "energia_kcal": 125, "proteina_g": 0.9, "carboidrato_g": 30.2, "gordura_g": 0.3, "fibra_g": 1.9, "calcio_mg": 18, "ferro_mg": 0.3, "potassio_mg": 180},
+            "aveia": {"nome": "Aveia em flocos crua", "categoria": "Cereais", "porcao": "30g", "energia_kcal": 118, "proteina_g": 4.2, "carboidrato_g": 20.0, "gordura_g": 2.6, "fibra_g": 2.7, "calcio_mg": 14, "ferro_mg": 1.3, "potassio_mg": 101},
+            "cuscuz": {"nome": "Cuscuz cozido", "categoria": "Cereais", "porcao": "60g", "energia_kcal": 88, "proteina_g": 2.8, "carboidrato_g": 18.6, "gordura_g": 0.3, "fibra_g": 0.6, "calcio_mg": 8, "ferro_mg": 0.2, "potassio_mg": 52},
+            "quinoa": {"nome": "Quinoa cozida", "categoria": "Cereais", "porcao": "60g", "energia_kcal": 68, "proteina_g": 2.4, "carboidrato_g": 12.3, "gordura_g": 1.5, "fibra_g": 1.9, "calcio_mg": 20, "ferro_mg": 1.2, "potassio_mg": 148},
+            "macarrao": {"nome": "Macarrão cozido", "categoria": "Cereais", "porcao": "80g", "energia_kcal": 75, "proteina_g": 2.5, "carboidrato_g": 16.0, "gordura_g": 0.4, "fibra_g": 0.9, "calcio_mg": 6, "ferro_mg": 0.4, "potassio_mg": 45},
+            "feijao": {"nome": "Feijão cozido", "categoria": "Legumes", "porcao": "150g", "energia_kcal": 76, "proteina_g": 5.4, "carboidrato_g": 13.5, "gordura_g": 0.3, "fibra_g": 3.2, "calcio_mg": 36, "ferro_mg": 2.4, "potassio_mg": 214},
+            "lentilha": {"nome": "Lentilha cozida", "categoria": "Legumes", "porcao": "150g", "energia_kcal": 116, "proteina_g": 8.8, "carboidrato_g": 19.8, "gordura_g": 0.5, "fibra_g": 6.6, "calcio_mg": 19, "ferro_mg": 3.3, "potassio_mg": 282},
+            "abobora": {"nome": "Abóbora cozida", "categoria": "Hortaliças", "porcao": "100g", "energia_kcal": 36, "proteina_g": 0.9, "carboidrato_g": 8.2, "gordura_g": 0.1, "fibra_g": 1.7, "calcio_mg": 21, "ferro_mg": 0.3, "potassio_mg": 195},
+            "couve": {"nome": "Couve refogada", "categoria": "Hortaliças", "porcao": "100g", "energia_kcal": 62, "proteina_g": 3.3, "carboidrato_g": 8.3, "gordura_g": 2.1, "fibra_g": 2.8, "calcio_mg": 143, "ferro_mg": 0.5, "potassio_mg": 296},
+            "tomate": {"nome": "Tomate cru", "categoria": "Hortaliças", "porcao": "100g", "energia_kcal": 18, "proteina_g": 0.9, "carboidrato_g": 3.9, "gordura_g": 0.2, "fibra_g": 1.2, "calcio_mg": 12, "ferro_mg": 0.3, "potassio_mg": 247},
+            "pepino": {"nome": "Pepino cru", "categoria": "Hortaliças", "porcao": "100g", "energia_kcal": 16, "proteina_g": 0.7, "carboidrato_g": 3.6, "gordura_g": 0.1, "fibra_g": 0.6, "calcio_mg": 16, "ferro_mg": 0.3, "potassio_mg": 147},
+            "rucola": {"nome": "Rúcula crua", "categoria": "Hortaliças", "porcao": "100g", "energia_kcal": 25, "proteina_g": 2.6, "carboidrato_g": 3.7, "gordura_g": 0.7, "fibra_g": 1.6, "calcio_mg": 160, "ferro_mg": 1.5, "potassio_mg": 369}
+        };
+        
+        // Populate select
+        const select = document.getElementById('ingredienteCalc');
+        Object.keys(ingredientes).forEach(key => {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = ingredientes[key].nome;
+            select.appendChild(option);
+        });
+        
+        // Render table
+        function renderTable(filtrado = null) {
+            const tbody = document.getElementById('tabelaBody');
+            tbody.innerHTML = '';
+            
+            const dados = filtrado || ingredientes;
+            
+            Object.entries(dados).forEach(([key, ing]) => {
+                const tr = document.createElement('tr');
+                const classCategoria = 'categoria-' + ing.categoria.toLowerCase().replace(/\s+/g, '');
+                tr.className = classCategoria;
+                
+                tr.innerHTML = `
+                    <td><strong>${ing.nome}</strong><br><small style="color: #999;">${ing.porcao}</small></td>
+                    <td>${ing.categoria}</td>
+                    <td class="numero">${ing.energia_kcal}</td>
+                    <td class="numero">${ing.proteina_g.toFixed(1)}</td>
+                    <td class="numero">${ing.carboidrato_g.toFixed(1)}</td>
+                    <td class="numero">${ing.gordura_g.toFixed(1)}</td>
+                    <td class="numero">${ing.fibra_g.toFixed(1)}</td>
+                    <td class="numero">${ing.calcio_mg}</td>
+                    <td class="numero">${ing.ferro_mg.toFixed(2)}</td>
+                    <td class="numero">${ing.potassio_mg}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        // Filtros
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const termo = this.value.toLowerCase();
+            const filtrado = Object.fromEntries(
+                Object.entries(ingredientes).filter(([key, ing]) =>
+                    ing.nome.toLowerCase().includes(termo)
+                )
+            );
+            renderTable(filtrado);
+        });
+        
+        document.getElementById('categoriaFilter').addEventListener('change', function() {
+            const categoria = this.value;
+            let filtrado = ingredientes;
+            if (categoria) {
+                filtrado = Object.fromEntries(
+                    Object.entries(ingredientes).filter(([key, ing]) =>
+                        ing.categoria === categoria
+                    )
+                );
+            }
+            renderTable(filtrado);
+        });
+        
+        function resetarFiltros() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoriaFilter').value = '';
+            renderTable();
+        }
+        
+        function calcularMacros() {
+            const key = document.getElementById('ingredienteCalc').value;
+            const peso = parseFloat(document.getElementById('pesoCalc').value) || 100;
+            
+            if (!key) return;
+            
+            const ing = ingredientes[key];
+            const fator = peso / (ing.porcao.match(/\d+/g)?.[0] || 100);
+            
+            document.getElementById('resultadoCalc').innerHTML = `
+                <div class="resultado-item">
+                    <div class="resultado-label">Calorias</div>
+                    <div class="resultado-valor">${(ing.energia_kcal * fator).toFixed(0)}</div>
+                    <div class="fonte">kcal</div>
+                </div>
+                <div class="resultado-item">
+                    <div class="resultado-label">Proteína</div>
+                    <div class="resultado-valor">${(ing.proteina_g * fator).toFixed(1)}</div>
+                    <div class="fonte">g</div>
+                </div>
+                <div class="resultado-item">
+                    <div class="resultado-label">Carboidratos</div>
+                    <div class="resultado-valor">${(ing.carboidrato_g * fator).toFixed(1)}</div>
+                    <div class="fonte">g</div>
+                </div>
+                <div class="resultado-item">
+                    <div class="resultado-label">Gordura</div>
+                    <div class="resultado-valor">${(ing.gordura_g * fator).toFixed(1)}</div>
+                    <div class="fonte">g</div>
+                </div>
+                <div class="resultado-item">
+                    <div class="resultado-label">Fibras</div>
+                    <div class="resultado-valor">${(ing.fibra_g * fator).toFixed(1)}</div>
+                    <div class="fonte">g</div>
+                </div>
+            `;
+        }
+        
+        // Initial render
+        renderTable();
+    </script>
+</body>
+</html>
